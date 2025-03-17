@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retro Fighter Battle</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #000;
+            color: #1fe01f;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+            background-image: linear-gradient(to bottom, #000066, #000033);
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            border: 4px solid #ff9c00;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 15px #ff9c00, inset 0 0 10px #ff9c00;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+        h1 {
+            color: #ff0066;
+            text-shadow: 3px 3px 0 #00ccff, -3px -3px 0 #ffcc00;
+            font-size: 2.5em;
+            letter-spacing: 2px;
+        }
+        h3, h4 {
+            color: #00ccff;
+            text-shadow: 1px 1px 0 #ff00ff;
+        }
+        .setup-area {
+            margin: 20px 0;
+            padding: 15px;
+            border: 2px dashed #00ff99;
+            border-radius: 5px;
+            background-color: rgba(0, 20, 40, 0.5);
+        }
+        .battle-log {
+            height: 300px;
+            overflow-y: auto;
+            text-align: left;
+            background-color: #000033;
+            padding: 10px;
+            border: 2px solid #00ff99;
+            border-radius: 5px;
+            margin: 20px 0;
+            color: #33ff33;
+            font-weight: bold;
+            box-shadow: inset 0 0 10px #00ff99;
+        }
+        .action-choice {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: rgba(0, 40, 80, 0.3);
+            border-radius: 5px;
+        }
+        .action-choice label {
+            margin-right: 15px;
+            color: #ffcc00;
+            cursor: pointer;
+        }
+        .action-choice label:hover {
+            color: #ff9c00;
+            text-shadow: 0 0 5px #ff9c00;
+        }
+        input[type="text"], button, textarea {
+            background-color: #000033;
+            color: #33ff33;
+            border: 2px solid #00ccff;
+            border-radius: 4px;
+            padding: 8px 12px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            box-shadow: 0 0 5px #00ccff;
+        }
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: #ff00ff;
+            box-shadow: 0 0 8px #ff00ff;
+        }
+        textarea {
+            width: 100%;
+            height: 50px;
+            resize: vertical;
+            margin-bottom: 10px;
+        }
+        button {
+            cursor: pointer;
+            background-color: #330066;
+            color: #ffcc00;
+            font-size: 1.1em;
+            border: 2px solid #ff9c00;
+            padding: 10px 20px;
+            margin-top: 10px;
+            text-transform: uppercase;
+            box-shadow: 0 0 10px #ff9c00;
+            transition: all 0.2s;
+        }
+        button:hover {
+            background-color: #660099;
+            color: #ffff00;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px #ffff00;
+        }
+        .victory {
+            color: #ffff00;
+            font-size: 28px;
+            font-weight: bold;
+            text-shadow: 2px 2px 0 #ff0066, -2px -2px 0 #00ccff;
+            animation: blink 0.8s infinite, rainbow 3s infinite;
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        @keyframes rainbow {
+            0% { color: #ffff00; }
+            20% { color: #ff9c00; }
+            40% { color: #ff0066; }
+            60% { color: #ff00ff; }
+            80% { color: #00ccff; }
+            100% { color: #ffff00; }
+        }
+        .player-setup {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-bottom: 2px dotted #00ccff;
+            background-color: rgba(0, 0, 40, 0.3);
+            border-radius: 8px;
+        }
+        input[type="checkbox"] {
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background-color: #000033;
+            border: 2px solid #00ccff;
+            border-radius: 3px;
+            vertical-align: middle;
+            cursor: pointer;
+            position: relative;
+        }
+        input[type="checkbox"]:checked {
+            background-color: #00ccff;
+            border-color: #ffcc00;
+        }
+        input[type="checkbox"]:checked::after {
+            content: "✓";
+            position: absolute;
+            color: #000033;
+            font-weight: bold;
+            top: -2px;
+            left: 2px;
+        }
+        label {
+            display: inline-block;
+            margin: 5px 0;
+        }
+        .damage-info {
+            color: #ff9c00;
+            font-size: 0.9em;
+        }
+        .dodge-text {
+            color: #ff00ff;
+            font-weight: bold;
+        }
+        .attack-text {
+            color: #ff0066;
+        }
+        .health-text {
+            color: #00ff99;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>RETRO FIGHTER BATTLE</h1>
+        
+        <div id="setup-screen" class="setup-area">
+            <div class="player-setup">
+                <h3>FIGHTER 1</h3>
+                <div>
+                    <label for="player1-name">NAME:</label>
+                    <input type="text" id="player1-name" value="PLAYER 1">
+                </div>
+                <div>
+                    <label for="player1-victory">VICTORY LINE:</label>
+                    <textarea id="player1-victory">I AM THE CHAMPION OF THE UNIVERSE!</textarea>
+                </div>
+                <div id="player1-actions" class="action-choice">
+                    <h4>CHOOSE 3 ACTIONS:</h4>
+                    <label><input type="checkbox" value="sword"> SWORD <span class="damage-info">(4/5 DMG)</span></label>
+                    <label><input type="checkbox" value="kick"> KICK <span class="damage-info">(1/5 DMG)</span></label>
+                    <label><input type="checkbox" value="punch"> PUNCH <span class="damage-info">(2/5 DMG)</span></label>
+                    <label><input type="checkbox" value="knife"> KNIFE <span class="damage-info">(3/5 DMG)</span></label>
+                    <label><input type="checkbox" value="gun"> GUN <span class="damage-info">(5/5 DMG)</span></label>
+                </div>
+            </div>
+            
+            <div class="player-setup">
+                <h3>FIGHTER 2</h3>
+                <div>
+                    <label for="player2-name">NAME:</label>
+                    <input type="text" id="player2-name" value="PLAYER 2">
+                </div>
+                <div>
+                    <label for="player2-victory">VICTORY LINE:</label>
+                    <textarea id="player2-victory">BOW BEFORE YOUR NEW OVERLORD!</textarea>
+                </div>
+                <div id="player2-actions" class="action-choice">
+                    <h4>CHOOSE 3 ACTIONS:</h4>
+                    <label><input type="checkbox" value="sword"> SWORD <span class="damage-info">(4/5 DMG)</span></label>
+                    <label><input type="checkbox" value="kick"> KICK <span class="damage-info">(1/5 DMG)</span></label>
+                    <label><input type="checkbox" value="punch"> PUNCH <span class="damage-info">(2/5 DMG)</span></label>
+                    <label><input type="checkbox" value="knife"> KNIFE <span class="damage-info">(3/5 DMG)</span></label>
+                    <label><input type="checkbox" value="gun"> GUN <span class="damage-info">(5/5 DMG)</span></label>
+                </div>
+            </div>
+            
+            <button id="start-battle">START BATTLE</button>
+        </div>
+        
+        <div id="battle-screen" style="display: none;">
+            <div id="battle-log" class="battle-log"></div>
+            <div id="victory-message" class="victory"></div>
+            <button id="reset-game">NEW BATTLE</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const setupScreen = document.getElementById('setup-screen');
+            const battleScreen = document.getElementById('battle-screen');
+            const startBattleBtn = document.getElementById('start-battle');
+            const resetGameBtn = document.getElementById('reset-game');
+            const battleLog = document.getElementById('battle-log');
+            const victoryMessage = document.getElementById('victory-message');
+            
+            const player1NameInput = document.getElementById('player1-name');
+            const player2NameInput = document.getElementById('player2-name');
+            const player1VictoryInput = document.getElementById('player1-victory');
+            const player2VictoryInput = document.getElementById('player2-victory');
+            
+            const player1ActionCheckboxes = document.querySelectorAll('#player1-actions input[type="checkbox"]');
+            const player2ActionCheckboxes = document.querySelectorAll('#player2-actions input[type="checkbox"]');
+            
+            const actionDamage = {
+                'sword': 4,
+                'kick': 1,
+                'punch': 2,
+                'knife': 3,
+                'gun': 5
+            };
+            
+            // Limit checkboxes to 3 selections
+            function limitCheckboxes(checkboxes) {
+                let checkedCount = 0;
+                checkboxes.forEach(checkbox => {
+                    if (checkbox.checked) checkedCount++;
+                });
+                
+                if (checkedCount >= 3) {
+                    checkboxes.forEach(checkbox => {
+                        if (!checkbox.checked) {
+                            checkbox.disabled = true;
+                        }
+                    });
+                } else {
+                    checkboxes.forEach(checkbox => {
+                        checkbox.disabled = false;
+                    });
+                }
+                
+                // Calculate total damage potential
+                let totalDamage = 0;
+                checkboxes.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        totalDamage += actionDamage[checkbox.value];
+                    }
+                });
+                
+                // If total damage exceeds 13, uncheck the last checkbox
+                if (totalDamage > 13 && checkedCount > 0) {
+                    const lastChecked = Array.from(checkboxes).filter(cb => cb.checked).pop();
+                    lastChecked.checked = false;
+                    limitCheckboxes(checkboxes); // Recalculate
+                }
+            }
+            
+            player1ActionCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', () => limitCheckboxes(player1ActionCheckboxes));
+            });
+            
+            player2ActionCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', () => limitCheckboxes(player2ActionCheckboxes));
+            });
+            
+            startBattleBtn.addEventListener('click', function() {
+                const player1Name = player1NameInput.value || 'PLAYER 1';
+                const player2Name = player2NameInput.value || 'PLAYER 2';
+                const player1VictoryLine = player1VictoryInput.value || 'I AM VICTORIOUS!';
+                const player2VictoryLine = player2VictoryInput.value || 'I AM VICTORIOUS!';
+                
+                const player1Actions = [];
+                const player2Actions = [];
+                
+                let player1CheckedCount = 0;
+                let player2CheckedCount = 0;
+                
+                player1ActionCheckboxes.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        player1Actions.push(checkbox.value);
+                        player1CheckedCount++;
+                    }
+                });
+                
+                player2ActionCheckboxes.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        player2Actions.push(checkbox.value);
+                        player2CheckedCount++;
+                    }
+                });
+                
+                if (player1CheckedCount !== 3 || player2CheckedCount !== 3) {
+                    alert('Each fighter must choose exactly 3 actions!');
+                    return;
+                }
+                
+                setupScreen.style.display = 'none';
+                battleScreen.style.display = 'block';
+                
+                startBattle(
+                    player1Name, 
+                    player2Name, 
+                    player1Actions, 
+                    player2Actions,
+                    player1VictoryLine,
+                    player2VictoryLine
+                );
+            });
+            
+            resetGameBtn.addEventListener('click', function() {
+                setupScreen.style.display = 'block';
+                battleScreen.style.display = 'none';
+                battleLog.innerHTML = '';
+                victoryMessage.innerHTML = '';
+                victoryMessage.className = '';
+                
+                // Reset checkboxes
+                player1ActionCheckboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                    checkbox.disabled = false;
+                });
+                
+                player2ActionCheckboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                    checkbox.disabled = false;
+                });
+            });
+            
+            function startBattle(player1Name, player2Name, player1Actions, player2Actions, player1VictoryLine, player2VictoryLine) {
+                let player1Health = 20;
+                let player2Health = 20;
+                
+                logMessage(`<span style="color:#ffff00;font-size:1.2em;">*** BATTLE BEGINS: ${player1Name} VS ${player2Name} ***</span>`);
+                logMessage(`<span style="color:#00ccff;">${player1Name}'s weapons: ${player1Actions.join(', ').toUpperCase()}</span>`);
+                logMessage(`<span style="color:#ff9c00;">${player2Name}'s weapons: ${player2Actions.join(', ').toUpperCase()}</span>`);
+                logMessage('<span style="color:#00ff99;">----------------------------</span>');
+                
+                const battleInterval = setInterval(() => {
+                    // Player 1's turn
+                    const player1Action = player1Actions[Math.floor(Math.random() * player1Actions.length)];
+                    const player1Damage = actionDamage[player1Action];
+                    
+                    // Check for dodge (1 in 5 chance)
+                    const player2Dodges = Math.random() < 0.2;
+                    
+                    if (player2Dodges) {
+                        logMessage(`<span class="attack-text">${player1Name} attacks with ${player1Action.toUpperCase()}</span> <span class="dodge-text">but ${player2Name} DODGES!</span>`);
+                    } else {
+                        player2Health -= player1Damage;
+                        logMessage(`<span class="attack-text">${player1Name} attacks with ${player1Action.toUpperCase()} for ${player1Damage} damage!</span>`);
+                    }
+                    
+                    logMessage(`<span class="health-text">${player2Name}'s health: ${Math.max(0, player2Health)}</span>`);
+                    
+                    if (player2Health <= 0) {
+                        clearInterval(battleInterval);
+                        endBattle(player1Name, player1VictoryLine);
+                        return;
+                    }
+                    
+                    // Player 2's turn
+                    const player2Action = player2Actions[Math.floor(Math.random() * player2Actions.length)];
+                    const player2Damage = actionDamage[player2Action];
+                    
+                    // Check for dodge (1 in 5 chance)
+                    const player1Dodges = Math.random() < 0.2;
+                    
+                    if (player1Dodges) {
+                        logMessage(`<span class="attack-text">${player2Name} attacks with ${player2Action.toUpperCase()}</span> <span class="dodge-text">but ${player1Name} DODGES!</span>`);
+                    } else {
+                        player1Health -= player2Damage;
+                        logMessage(`<span class="attack-text">${player2Name} attacks with ${player2Action.toUpperCase()} for ${player2Damage} damage!</span>`);
+                    }
+                    
+                    logMessage(`<span class="health-text">${player1Name}'s health: ${Math.max(0, player1Health)}</span>`);
+                    logMessage('<span style="color:#00ff99;">----------------------------</span>');
+                    
+                    if (player1Health <= 0) {
+                        clearInterval(battleInterval);
+                        endBattle(player2Name, player2VictoryLine);
+                        return;
+                    }
+                }, 1500);
+            }
+            
+            function logMessage(message) {
+                const messageElement = document.createElement('div');
+                messageElement.innerHTML = message;
+                battleLog.appendChild(messageElement);
+                battleLog.scrollTop = battleLog.scrollHeight;
+            }
+            
+            function endBattle(winner, victoryLine) {
+                logMessage(`<span style="color:#ffff00;font-size:1.2em;">*** BATTLE OVER ***</span>`);
+                logMessage(`<span style="color:#ff00ff;font-size:1.1em;font-weight:bold;">${winner}: "${victoryLine}"</span>`);
+                victoryMessage.innerHTML = victoryLine;
+                victoryMessage.className = 'victory';
+                
+                // Play victory sound (simple beep pattern)
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                playVictorySound(audioContext);
+            }
+            
+            function playVictorySound(audioContext) {
+                const notes = [440, 554.37, 659.25, 880, 1046.5]; // A4, C#5, E5, A5, C6
+                const noteDuration = 0.15;
+                
+                notes.forEach((freq, index) => {
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.type = 'square';
+                    oscillator.frequency.value = freq;
+                    
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + noteDuration);
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.start(audioContext.currentTime + index * noteDuration);
+                    oscillator.stop(audioContext.currentTime + (index + 1) * noteDuration);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
