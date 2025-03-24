@@ -1,6 +1,3 @@
-/**
- * Quotes management script
- */
 let quotes = [
     "The quick brown fox jumps over the lazy dog. This pangram contains every letter of the English alphabet at least once.",
     "Programming is the art of telling another human being what one wants the computer to do.",
@@ -18,8 +15,6 @@ let quotes = [
     "Before software can be reusable it first has to be usable.",
     "The best performance improvement is the transition from the nonworking state to the working state."
 ];
-
-// Load quotes from local storage
 function loadQuotes() {
     const savedQuotes = localStorage.getItem('typingQuotes');
     if (savedQuotes) {
@@ -29,8 +24,6 @@ function loadQuotes() {
         saveQuotes();
     }
 }
-
-// Save quotes to local storage
 function saveQuotes() {
     localStorage.setItem('typingQuotes', JSON.stringify(quotes));
 }
