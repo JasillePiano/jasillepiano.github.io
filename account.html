@@ -1,7 +1,3 @@
-<!-- 
-  ACCOUNT PAGE
-  This page shows user profile, typing history and statistics
--->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -85,11 +81,9 @@
     <script src="navigation.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Load user profile
             const savedName = localStorage.getItem('typingUsername') || '';
             document.getElementById('profile-name').value = savedName;
-            
-            // Load typing history
+          
             const typingHistory = JSON.parse(localStorage.getItem('typingHistory')) || [];
             const historyList = document.getElementById('typing-history');
             const historyEmpty = document.querySelector('.history-empty');
@@ -114,8 +108,6 @@
                     
                     historyList.appendChild(li);
                 });
-                
-                // Calculate statistics
                 const wpmValues = typingHistory.map(entry => entry.wpm);
                 const highestWpm = Math.max(...wpmValues);
                 const averageWpm = Math.round(wpmValues.reduce((a, b) => a + b, 0) / wpmValues.length);
@@ -128,12 +120,10 @@
                 document.getElementById('success-rate').textContent = `${successRate}%`;
             }
             
-            // Save profile
             document.getElementById('save-profile').addEventListener('click', function() {
                 const name = document.getElementById('profile-name').value.trim();
                 localStorage.setItem('typingUsername', name);
                 
-                // Show notification
                 const notification = document.createElement('div');
                 notification.className = 'notification success';
                 notification.textContent = 'Profile saved successfully!';
