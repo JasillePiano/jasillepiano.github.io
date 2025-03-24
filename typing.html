@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>120+ WPM Typing Challenge</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="typing.css">
+</head>
+<body>
+    <div class="nav-container">
+        <div class="burger-menu">
+            <div class="burger-icon">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li class="active"><a href="typing.html">120 WPM Challenge</a></li>
+                <li><a href="quotes.html">Add Quotes</a></li>
+                <li><a href="account.html">Account</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="container">
+        <div class="logo">
+            <h1><span class="highlight">120+</span> WPM Challenge</h1>
+            <p class="tagline">Only the fastest typists survive</p>
+        </div>
+        
+        <div id="user-info" class="section">
+            <label for="username">Your Name:</label>
+            <input type="text" id="username" placeholder="Enter your name">
+            <button id="start-btn" class="glow-btn">Start Challenge</button>
+        </div>
+        
+        <div id="challenge-area" class="section hidden">
+            <div id="stats">
+                <div id="user-display">Name: <span id="user-display-name">User</span></div>
+                <div id="wpm-display">WPM: <span id="wpm">0</span></div>
+                <div id="errors-display">Errors: <span id="errors">0</span></div>
+            </div>
+            
+            <div id="quote-display" class="quote-text"></div>
+            
+            <textarea id="quote-input" placeholder="Start typing when ready..."></textarea>
+            
+            <div id="result" class="hidden">
+                <h2 id="result-message"></h2>
+                <div id="result-stats">
+                    <p>Speed: <span id="final-wpm">0</span> WPM</p>
+                    <p>Errors: <span id="final-errors">0</span></p>
+                </div>
+                <div class="button-group">
+                    <button id="retry-btn" class="glow-btn">Try Again</button>
+                    <button id="new-quote-btn" class="glow-btn">New Quote</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="quotes.js"></script>
+    <script src="navigation.js"></script>
+    <script src="typing.js"></script>
+</body>
+</html>

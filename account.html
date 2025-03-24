@@ -1,0 +1,156 @@
+<!-- 
+  ACCOUNT PAGE
+  This page shows user profile, typing history and statistics
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account - 120+ WPM Challenge</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="typing.css">
+</head>
+<body>
+    <div class="nav-container">
+        <div class="burger-menu">
+            <div class="burger-icon">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="typing.html">120 WPM Challenge</a></li>
+                <li><a href="quotes.html">Add Quotes</a></li>
+                <li class="active"><a href="account.html">Account</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="container">
+        <div class="logo">
+            <h1>Your <span class="highlight">Account</span></h1>
+            <p class="tagline">Track your typing progress</p>
+        </div>
+        
+        <div class="section">
+            <h3>Profile</h3>
+            <div class="profile-info">
+                <div class="profile-field">
+                    <label for="profile-name">Name:</label>
+                    <input type="text" id="profile-name" placeholder="Your name">
+                </div>
+                <button id="save-profile" class="glow-btn">Save Profile</button>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h3>Typing History</h3>
+            <div id="history-container">
+                <div class="history-empty">
+                    <p>Complete typing challenges to see your history here.</p>
+                </div>
+                <ul id="typing-history" class="hidden">
+                    <!-- History items will be added here dynamically -->
+                </ul>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h3>Statistics</h3>
+            <div class="stats-container">
+                <div class="stat-box">
+                    <div class="stat-title">Highest WPM</div>
+                    <div class="stat-value" id="highest-wpm">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-title">Average WPM</div>
+                    <div class="stat-value" id="average-wpm">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-title">Challenges Completed</div>
+                    <div class="stat-value" id="challenges-completed">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-title">Success Rate</div>
+                    <div class="stat-value" id="success-rate">0%</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="quotes.js"></script>
+    <script src="navigation.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load user profile
+            const savedName = localStorage.getItem('typingUsername') || '';
+            document.getElementById('profile-name').value = savedName;
+            
+            // Load typing history
+            const typingHistory = JSON.parse(localStorage.getItem('typingHistory')) || [];
+            const historyList = document.getElementById('typing-history');
+            const historyEmpty = document.querySelector('.history-empty');
+            
+            if (typingHistory.length > 0) {
+                historyEmpty.classList.add('hidden');
+                historyList.classList.remove('hidden');
+                
+                typingHistory.forEach(entry => {
+                    const li = document.createElement('li');
+                    li.className = 'history-item';
+                    
+                    const result = entry.wpm >= 120 ? 'success' : 'failure';
+                    
+                    li.innerHTML = `
+                        <div class="history-date">${new Date(entry.date).toLocaleDateString()}</div>
+                        <div class="history-details">
+                            <span class="history-wpm ${result}">${entry.wpm} WPM</span>
+                            <span class="history-errors">Errors: ${entry.errors}</span>
+                        </div>
+                    `;
+                    
+                    historyList.appendChild(li);
+                });
+                
+                // Calculate statistics
+                const wpmValues = typingHistory.map(entry => entry.wpm);
+                const highestWpm = Math.max(...wpmValues);
+                const averageWpm = Math.round(wpmValues.reduce((a, b) => a + b, 0) / wpmValues.length);
+                const successCount = typingHistory.filter(entry => entry.wpm >= 120).length;
+                const successRate = Math.round((successCount / typingHistory.length) * 100);
+                
+                document.getElementById('highest-wpm').textContent = highestWpm;
+                document.getElementById('average-wpm').textContent = averageWpm;
+                document.getElementById('challenges-completed').textContent = typingHistory.length;
+                document.getElementById('success-rate').textContent = `${successRate}%`;
+            }
+            
+            // Save profile
+            document.getElementById('save-profile').addEventListener('click', function() {
+                const name = document.getElementById('profile-name').value.trim();
+                localStorage.setItem('typingUsername', name);
+                
+                // Show notification
+                const notification = document.createElement('div');
+                notification.className = 'notification success';
+                notification.textContent = 'Profile saved successfully!';
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.classList.add('show');
+                }, 10);
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 300);
+                }, 3000);
+            });
+        });
+    </script>
+</body>
+</html>
